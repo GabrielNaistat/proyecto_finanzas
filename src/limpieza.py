@@ -204,6 +204,8 @@ def regresion_imputacion_salario_despues_IA(df) :
     df.loc[pred.index,'salario_despues_IA'] = modelo.predict(X_pred)
 
 def regresion_riesgo_automatizacion(df) :
+    """Imputamos los valores nulos de la columna riesgo_automatizacion_estimado% con un modelo de regresion lineal con las columnas que tienen mayor correlacion con la columna a imputar/objetivo"""
+
     print("========RIESGO AUTOMATIZACION========")
     v_imputar = 'riesgo_automatizacion_estimado%'
     #print(df.corr(numeric_only=True)['riesgo_automatizacion_estimado%'].sort_values(ascending=False))

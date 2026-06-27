@@ -1,6 +1,11 @@
 import pandas as pd
 import numpy as np
 
+"""
+modulo de EDA (Exploratory Data Analysis) para analizar los datos y obtener información relevante sobre la distribución de los datos, la volatilidad de los ingresos y la brecha de habilidades por país.
+"""
+
+# ?????????????????
 def outliers(df) :
     print("========INICIO LIMPIAR OUTLIERS========")
     variables = ['salario_antes_IA','salario_despues_IA']
@@ -12,7 +17,8 @@ def outliers(df) :
 
 
 
-def volatilidad_ingresos(df) :
+def volatilidad_ingresos(df):
+    """Calcula la volatilidad de los ingresos antes y despues de la IA, mostrando el maximo, minimo, promedio, rango y varianza de las variables salario_antes_IA y salario_despues_IA"""
     print("========INICIO VOLATILIDAD INGRESOS========")
     variables = ['salario_antes_IA','salario_despues_IA']
     for var in variables:
@@ -32,13 +38,18 @@ def volatilidad_ingresos(df) :
         print(f"    Rango            : {rango:.2f}")
         print(f"    Varianza         : {varianza:.4f}")
 
+
 def agrupar_promedio(df,nombre_grupo,nombre_grupo_promedio):
+    """Agrupa los datos por una columna y calcula el promedio de otra columna"""
     agrupado = ( df.groupby(nombre_grupo)[nombre_grupo_promedio].mean())
     print(agrupado)
     return  agrupado
 
 
 def agrupar_promedio_max(df,nombre_grupo,nombre_grupo_promedio):
+    """
+    imprime el país con mayor brecha de habilidades y su promedio, 
+    """
     promedio_pais=agrupar_promedio(df,nombre_grupo,nombre_grupo_promedio)
 
     pais_critico = promedio_pais.idxmax()
@@ -47,6 +58,8 @@ def agrupar_promedio_max(df,nombre_grupo,nombre_grupo_promedio):
     print(f"Promedio: {valor:.2f}")
 
 ###########################################################
+
+# 
 if __name__ == "__main__":
     print(f"¡Has ejecutado el módulo de EDA directamente!")
     raw_csv = "data\\raw\\ai_job_replacement_dirty.csv"
