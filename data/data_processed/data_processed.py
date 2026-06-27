@@ -63,7 +63,7 @@ def procesar_datos(ruta_csv):
 # Ejemplo: usar en tu código
 if __name__ == "__main__":
     # Ruta al CSV raw
-    csv_path = Path(__file__).parent.parent / "raw" / "ai_job_replacement_dirty.csv"
+    csv_path = "data\\raw\\ai_job_replacement_dirty.csv"
     
     # Procesar datos
     data_cleaned = procesar_datos(str(csv_path))

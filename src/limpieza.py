@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
+import numpy as np
 
 def renombrar_columnas(df):
     print("========RENOMBRAR COLUMNAS========")
@@ -34,54 +35,102 @@ def quitar_duplicados(df):
     print("Filas completamente duplicadas:", df.duplicated().sum())
 
 def normalizacion_sector(df) :
+    """Normalizamos los valores de la columna sector para que no haya inconsistencias de formato"""
+
     print("========NORMALIZACION SECTOR========")
+
+    # revisamos como estan los valores unicos de la columna sector antes de normalizar
     print(df['sector'].unique())
+    
+    # corregimos inconsistencias de formato Finance
     diccionario = ['FINANCE','Finance',' Finance ','finance']
     df['sector'] = df['sector'].replace(diccionario, 'Finanzas')
+
+    # corregimos inconsistencias de formato Technology
     diccionario = ['Technology','technology','TECHNOLOGY',' Technology ']
     df['sector'] = df['sector'].replace(diccionario, 'Tecnologia')
+
+    # corregimos inconsistencias de formato Manufactura
     diccionario = ['manufacturing','Manufacturing',' Manufacturing ','MANUFACTURING']
     df['sector'] = df['sector'].replace(diccionario, 'Manufactura')
+
+    # corregimos inconsistencias de formato Salud
     diccionario = ['Healthcare','healthcare',' Healthcare ','HEALTHCARE']
     df['sector'] = df['sector'].replace(diccionario, 'Salud')
+
+    # corregimos inconsistencias de formato Comercio y Minorista
     diccionario = [' Retail ','Retail','RETAIL','retail']
     df['sector'] = df['sector'].replace(diccionario, 'Comercio y Minorista')
+
+    # corregimos inconsistencias de formato Educacion
     diccionario = ['Education','education',' Education ','EDUCATION']
     df['sector'] = df['sector'].replace(diccionario, 'Educacion')
+
+    # corregimos inconsistencias de formato Transporte
     diccionario = ['Transportation','transportation',' Transportation ','TRANSPORTATION']
     df['sector'] = df['sector'].replace(diccionario, 'Transporte')
+
+    # corregimos inconsistencias de formato Energia
     diccionario = ['Energy','energy',' Energy ','ENERGY']
     df['sector'] = df['sector'].replace(diccionario, 'Energia')
+
+    # revisamos como quedaron los valores unicos de la columna sector despues de normalizar
     print(df['sector'].unique())
 
+
 def corregir_anio(df): 
+    """Corregimos el formato de la columna año_registro para que sea int para mejorar la consistencia de los datos y evitar errores en el análisis posterior
+    """
+
     print("========CORREGIR AÑO========")
     print(df['año_registro'].unique())
+
+    # convertimos la columna a int
     df['año_registro'] = df['año_registro'].astype(int)
+
     print(df['año_registro'].unique())
 
 def corregir_formato_salarios(df) :
+    """Corregimos el formato de los valores de las columnas de salarios para que sean numéricas y mejorar la consistencia de los datos
+    """
+
     print("========CORREGIR FORMATO SALARIOS========")
+
+    # columna salario_antes_IA
     df['salario_antes_IA'] = (df['salario_antes_IA'].str.replace('$','', regex=False).str.replace(',', '', regex=False))
+    # convertimos a valor numerico aquellos valores que pueden ser reconvertidos en numero, y los que no pueden son convertidos a NaN
     df['salario_antes_IA'] = pd.to_numeric(df['salario_antes_IA'])
+
+    #columna salario_despues_IA
     df['salario_despues_IA'] = (df['salario_despues_IA'].str.replace('$', '', regex=False).str.replace(',', '', regex=False))
+    # convertimos a valor numerico aquellos valores que pueden ser reconvertidos en numero, y los que no pueden son convertidos a NaN
     df['salario_despues_IA'] = pd.to_numeric(df['salario_despues_IA'])
 
-def regresion_imputacion_salario_antes_IA(df) :
+def regresion_imputacion_salario_antes_IA(df):
+
     print("========REGRESION SALARIO ANTES========")
+
+    # columna a imputar "salario_antes_IA"
     v_imputar = 'salario_antes_IA'
+    # calculamos la matriz de correlacion para ver que columnas tienen mayor correlacion con la columna a imputar
     matriz_corr = df.corr(numeric_only=True)[v_imputar].sort_values(ascending=False)
+    # seleccionamos las columnas con correlacion mayor a 0.5
     cols_relevante =  matriz_corr[matriz_corr > 0.5]
     print("Columnas con mas de 0.5 de correlacion \n: ", cols_relevante)
     cols_relevante = matriz_corr[matriz_corr > 0.5].index.to_list() #lista de columnas
+    # eliminamos la columna a imputar de la lista de columnas relevantes pq no podemos usarla como predictora
     cols_relevante.remove(v_imputar)
     print(cols_relevante)
+
+
+    # CREAMOS EL MODELO DE REGRESION LINEAL PARA IMPUTAR LOS VALORES NULOS DE LA COLUMNA SALARIO_ANTES_IA
+    # entradas a entrenar: aquellas que no tienen nulos en la columna objetivo y que no tienen nulos en las columnas predictoras
 
     # REGRESION LINEAL SIMPLE ENTRE SALARIO_ANTES_IA Y SALARIO_DESPUES_IA
     train = df[(df['salario_antes_IA'].notna()) & (df['salario_despues_IA'].notna())] #en una fila ninguno sea nulo para entrenar
     pred = df[(df['salario_antes_IA'].isna()) & (df['salario_despues_IA'].notna())] #en una fila sea nulo la variable respuesta y no nulo la predictora
 
-    X = train[['salario_despues_IA']]
+    X = train['salario_despues_IA']
     y = train['salario_antes_IA']
 
     X_train, X_test, y_train, y_test = train_test_split(
@@ -100,10 +149,8 @@ def regresion_imputacion_salario_antes_IA(df) :
 
     X_pred = pred[['salario_despues_IA']]
 
-    df.loc[
-        pred.index,
-        'salario_antes_IA'
-    ] = modelo.predict(X_pred)
+    # completamos los valores nulos de la columna salario_antes_IA con las predicciones del modelo
+    df.loc[pred.index,'salario_antes_IA'] = modelo.predict(X_pred) 
 
 
 def mediana_imputacion_salario_antes_IA(df) :
@@ -118,6 +165,8 @@ def imputacion_salario_antes_IA(df) :
 
 def regresion_imputacion_salario_despues_IA(df) :
     print("========IMPUTAR SALARIO DESPUES========")
+
+    # calculamos la correlacion de las columnas con la columna a imputar "salario_despues_IA"
     v_imputar = 'salario_despues_IA'
     matriz_corr = df.corr(numeric_only=True)[v_imputar].sort_values(ascending=False)
     cols_relevante =  matriz_corr[matriz_corr > 0.5]
@@ -125,7 +174,9 @@ def regresion_imputacion_salario_despues_IA(df) :
     cols_relevante = matriz_corr[matriz_corr > 0.5].index.to_list() #lista de columnas
     cols_relevante.remove(v_imputar)
     print(cols_relevante)
-    # AHORA LLENAMOS LOS NULOS DE LA COLUMNA SALARIOS_DESPUES_IA
+
+    
+    # AHORA LLENAMOS LOS NULOS DE LA COLUMNA SALARIOS_DESPUES_IA, creando un modelo de regresion lineal con las columnas que tienen mayor correlacion con la columna a imputar
 
     train = df[ (df[v_imputar].notna())]
 
@@ -149,10 +200,8 @@ def regresion_imputacion_salario_despues_IA(df) :
 
     X_pred = pred[['salario_antes_IA']]
 
-    df.loc[
-        pred.index,
-        'salario_despues_IA'
-    ] = modelo.predict(X_pred)
+    # predecimos los valores nulos de la columna salario_despues_IA con las predicciones del modelo
+    df.loc[pred.index,'salario_despues_IA'] = modelo.predict(X_pred)
 
 def regresion_riesgo_automatizacion(df) :
     print("========RIESGO AUTOMATIZACION========")
@@ -203,6 +252,7 @@ def regresion_riesgo_automatizacion(df) :
         v_imputar
     ] = modelo.predict(X_pred) #completa con predicciones
 
+
 def imputacion_sector(df) :
     print("========IMPUTAR SECTOR========")
     # AHORA LLENAMOS LOS NULOS DE LA COLUMNA SECTOR
@@ -210,13 +260,18 @@ def imputacion_sector(df) :
     print('Cantidad de nulos en sector:',df['sector'].isna().sum())
     print('Cantidad de registros FINANZAS:', df['sector'][df['sector']=='Finanzas'].value_counts())
 
-    df['sector'] = df['sector'].fillna(
-        df.groupby('profesion')['sector'].transform(
-            lambda x: x.mode().iloc[0] if not x.mode().empty else np.nan
-        )
-    )
+    # ??????????
+    df['sector'] = df['sector'].fillna(df.groupby('profesion')['sector'].transform(lambda x: x.mode().iloc[0] if not x.mode().empty else np.nan))
+
+
     print('Cantidad de nulos en sector despues imputacion:',df['sector'].isna().sum())
     print('Cantidad de registros FINANZAS despues imputacion:', df['sector'][df['sector']=='Finanzas'].value_counts())
+
+
+
+
+
+    
 ####################################################################
 ####################################################################
 

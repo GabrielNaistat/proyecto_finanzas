@@ -38,6 +38,8 @@ def auditoria(df) :
     err_format = True #check_format(df,)
     return dups,vacios,err_format
 
+
+
 if __name__ == "__main__":
     import pandas as pd
 
