@@ -6,9 +6,13 @@ def outliers(df) :
     variables = ['salario_antes_IA','salario_despues_IA']
     
     for var in variables:   
-        print(var, "menor a cero: ", df[df[var] < 0])
-        if df[var].min() < 0 : 
-            df = df[df[var] > 0]
+        print(var, "menor o igual a cero: ", df[df[var] <= 0])
+        if df[var].min() <= 0 :
+           df = df[df[var] > 0]
+           Q1 = df['var'].quantile(0.25)
+           Q3 = df['col'].quantile(0.75)
+           IQR = Q3 - Q1
+           df[(df['var'] <= Q1 - 1.5*IQR) & (df['var'] >= Q3 + 1.5*IQR)]
 
 
 

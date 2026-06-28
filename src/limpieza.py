@@ -33,26 +33,67 @@ def quitar_duplicados(df):
     df = df.drop_duplicates()
     print("Filas completamente duplicadas:", df.duplicated().sum())
 
-def normalizacion_sector(df) :
+def normalizacion_sector(df, l=True, hc=False): # Siempre recibe un DataFrame :
     print("========NORMALIZACION SECTOR========")
     print(df['sector'].unique())
-    diccionario = ['FINANCE','Finance',' Finance ','finance']
-    df['sector'] = df['sector'].replace(diccionario, 'Finanzas')
-    diccionario = ['Technology','technology','TECHNOLOGY',' Technology ']
-    df['sector'] = df['sector'].replace(diccionario, 'Tecnologia')
-    diccionario = ['manufacturing','Manufacturing',' Manufacturing ','MANUFACTURING']
-    df['sector'] = df['sector'].replace(diccionario, 'Manufactura')
-    diccionario = ['Healthcare','healthcare',' Healthcare ','HEALTHCARE']
-    df['sector'] = df['sector'].replace(diccionario, 'Salud')
-    diccionario = [' Retail ','Retail','RETAIL','retail']
-    df['sector'] = df['sector'].replace(diccionario, 'Comercio y Minorista')
-    diccionario = ['Education','education',' Education ','EDUCATION']
-    df['sector'] = df['sector'].replace(diccionario, 'Educacion')
-    diccionario = ['Transportation','transportation',' Transportation ','TRANSPORTATION']
-    df['sector'] = df['sector'].replace(diccionario, 'Transporte')
-    diccionario = ['Energy','energy',' Energy ','ENERGY']
-    df['sector'] = df['sector'].replace(diccionario, 'Energia')
-    print(df['sector'].unique())
+    #diccionario = ['FINANCE','Finance',' Finance ','finance']
+    #df['sector'] = df['sector'].replace(diccionario, 'Finanzas')
+    #diccionario = ['Technology','technology','TECHNOLOGY',' Technology ']
+    #df['sector'] = df['sector'].replace(diccionario, 'Tecnologia')
+    #diccionario = ['manufacturing','Manufacturing',' Manufacturing ','MANUFACTURING']
+    #df['sector'] = df['sector'].replace(diccionario, 'Manufactura')
+    #diccionario = ['Healthcare','healthcare',' Healthcare ','HEALTHCARE']
+    #df['sector'] = df['sector'].replace(diccionario, 'Salud')
+    #diccionario = [' Retail ','Retail','RETAIL','retail']
+    #df['sector'] = df['sector'].replace(diccionario, 'Comercio y Minorista')
+    #diccionario = ['Education','education',' Education ','EDUCATION']
+    #df['sector'] = df['sector'].replace(diccionario, 'Educacion')
+    #diccionario = ['Transportation','transportation',' Transportation ','TRANSPORTATION']
+    #df['sector'] = df['sector'].replace(diccionario, 'Transporte')
+    #diccionario = ['Energy','energy',' Energy ','ENERGY']
+    #df['sector'] = df['sector'].replace(diccionario, 'Energia')
+    
+    '''
+      De acuerdo a los parámetros que recibe 'normalizacion_sector'
+      seleccionamos que devuelve: por defecto, cambia
+      a minúculas los encabezados de las columnas,
+      los espacios en blanco por guiones bajos y elimina
+      espacios al inicio y fin de cada título. Si
+      hc = True, cambia también los valores de
+      las celdas y "l" debe ser False'''
+
+  # Guardamos la lista de columnas originales antes de cualquier cambio
+    columnas_originales = df.columns.tolist()
+
+    if l and hc: # Caso de error: opciones mutuamente excluyentes
+      print("Error: 'l' y 'hc' no pueden ser ambos True. Son mutuamente excluyentes.")
+      print("Si desea normalizar sólo los títulos, pase el DataFrame como argumento (ej: norma(df))")
+      print("Si desea normalizar también las celdas, pase 'l=False' y 'hc=True' (ej: norma(df, l=False, hc=True))")
+    return df # Devuelve el df original en caso de error
+
+  # Paso 1: Limpiar valores de celdas si hc es True
+    if hc:
+        print(f"Iniciando limpieza de valores de celdas para columnas: {columnas_originales}")
+        for nombre_col in columnas_originales:
+        # Verificar si la columna es tipi "Object", que suelen indicar que las columnas tienen tipos mezclados mezclados o de tipo string
+            if df[nombre_col].dtype == 'object':
+            # Convierte a string para asegurar que los métodos .str funcionen en todos los elementos,
+            # luego limpia espacios y convierte a minúsculas.
+            # Finalmente, revierte el string 'nan' a np.nan para mantener los valores faltantes.
+                df[col_name] = df[col_name].astype(str).str.strip().str.lower()
+                df[col_name] = df[col_name].replace('nan', np.nan)
+
+  # Paso 2: Limpiar y renombrar encabezados de columnas si 'l' es True (por defecto) o 'hc' es True
+        if l or hc:
+      # Crea un mapeo de nombres de columnas originales a los nuevos nombres limpios
+            mapa_nuevas_columnas = {col: col.strip().lower().replace(' ', '_') for col in columnas_originales}
+            df.rename(columns=mapa_nuevas_columnas, inplace=True)
+        print(df['sector'].unique())
+
+        return df # Explicitly return the modified DataFrame
+
+# Reasignar el resultado de la función al df para asegurarnos de que queden los cambios
+
 
 def corregir_anio(df): 
     print("========CORREGIR AÑO========")
