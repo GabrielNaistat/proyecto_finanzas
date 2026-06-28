@@ -9,11 +9,25 @@ modulo de EDA (Exploratory Data Analysis) para analizar los datos y obtener info
 def outliers(df) :
     print("========INICIO LIMPIAR OUTLIERS========")
     variables = ['salario_antes_IA','salario_despues_IA']
-    
+
     for var in variables:   
-        print(var, "menor a cero: ", df[df[var] < 0])
         if df[var].min() < 0 : 
-            df = df[df[var] > 0]
+            df[var] = abs(df[var])
+
+        Q1 = df[var].quantile(0.25)
+        Q3 = df[var].quantile(0.75)
+
+        IQR = Q3 - Q1
+        print(f"    Q1         : {Q1:.2f}")
+        print(f"    Q3            : {Q3:.2f}")
+        print(f"    IQE         : {IQR:.4f}")
+
+        lim_inf = Q1 - 1.5 * IQR
+        lim_sup = Q3 + 1.5 * IQR
+        outliers = df[(df[var] < lim_inf) | (df[var] > lim_sup)]
+        print(f"\{var}: límites [{lim_inf:.2f}, {lim_sup:.2f}]. Outliers encontrados: {len(outliers)}")
+
+        df = df[(df[var] > lim_inf) & (df[var] < lim_sup)]
 
 
 # calcula la volatilidad de los ingresos antes y despues de la IA, mostrando el maximo, minimo, promedio, rango y varianza de las variables salario_antes_IA y salario_despues_IA
@@ -27,10 +41,7 @@ def volatilidad_ingresos(df):
         minimo =  df[var].min()
         rango = maximo - minimo
         varianza = df[var].var()
-        # desvio = df[var].std()
-        # q1 = df[var].quantile(0.25)
-        # q3 = df[var].quantile(0.75)
-        # iqr = q3 - q1
+
 
         print(f"\n>>> Variable: {var}")
         print(f"    Maximo           : {maximo:.2f}")

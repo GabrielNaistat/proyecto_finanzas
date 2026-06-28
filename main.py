@@ -27,20 +27,26 @@ quitar_duplicados(df)
 normalizacion_sector(df)
 corregir_anio(df)
 corregir_formato_salarios(df)
-regresion_riesgo_automatizacion(df)
+
+#Limpieza imputacion
 
 imputacion_salario_antes_IA(df)
 regresion_imputacion_salario_despues_IA(df)
+regresion_riesgo_automatizacion(df)
 imputacion_sector(df)
 
 df = df[df['sector'] == 'Finanzas']
 
 #EDA
-outliers(df)
+outliers(df) #para quitar valores negativos
 volatilidad_ingresos(df) #nota: Antes de la IA la diferencia entre mediana y media era minima, luego de la ia pasa a ser mayor.
 agrupar_promedio_max(df,'pais','indice_brecha_habilidades')
+
 
 #Visualizacion
 grafico_funcion_A(df,'año_registro','salario_antes_IA','salario_despues_IA')
 grafico_funcion_torta(df,'categoria_riesgo')
 grafico_barras(df,'pais','nivel_adopcion_IA')
+plt.show()
+
+print(df.info())

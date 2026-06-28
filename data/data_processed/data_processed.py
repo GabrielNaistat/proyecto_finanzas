@@ -1,5 +1,5 @@
 # de esta manera podemos importar todas las funciones de limpieza desde un solo archivo
-from src.load_data import load_data
+from src.load_data import *
 from src.limpieza import (
     renombrar_columnas,
     quitar_duplicados,

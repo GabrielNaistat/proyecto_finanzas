@@ -106,6 +106,8 @@ def corregir_formato_salarios(df) :
     # convertimos a valor numerico aquellos valores que pueden ser reconvertidos en numero, y los que no pueden son convertidos a NaN
     df['salario_despues_IA'] = pd.to_numeric(df['salario_despues_IA'])
 
+
+
 def regresion_imputacion_salario_antes_IA(df):
 
     print("========REGRESION SALARIO ANTES========")
@@ -115,13 +117,12 @@ def regresion_imputacion_salario_antes_IA(df):
     # calculamos la matriz de correlacion para ver que columnas tienen mayor correlacion con la columna a imputar
     matriz_corr = df.corr(numeric_only=True)[v_imputar].sort_values(ascending=False)
     # seleccionamos las columnas con correlacion mayor a 0.5
-    cols_relevante =  matriz_corr[matriz_corr > 0.5]
+    cols_relevante =  matriz_corr[abs(matriz_corr) > 0.5]
     print("Columnas con mas de 0.5 de correlacion \n: ", cols_relevante)
     cols_relevante = matriz_corr[matriz_corr > 0.5].index.to_list() #lista de columnas
     # eliminamos la columna a imputar de la lista de columnas relevantes pq no podemos usarla como predictora
     cols_relevante.remove(v_imputar)
     print(cols_relevante)
-
 
     # CREAMOS EL MODELO DE REGRESION LINEAL PARA IMPUTAR LOS VALORES NULOS DE LA COLUMNA SALARIO_ANTES_IA
     # entradas a entrenar: aquellas que no tienen nulos en la columna objetivo y que no tienen nulos en las columnas predictoras
@@ -130,7 +131,7 @@ def regresion_imputacion_salario_antes_IA(df):
     train = df[(df['salario_antes_IA'].notna()) & (df['salario_despues_IA'].notna())] #en una fila ninguno sea nulo para entrenar
     pred = df[(df['salario_antes_IA'].isna()) & (df['salario_despues_IA'].notna())] #en una fila sea nulo la variable respuesta y no nulo la predictora
 
-    X = train['salario_despues_IA']
+    X = train[['salario_despues_IA']]
     y = train['salario_antes_IA']
 
     X_train, X_test, y_train, y_test = train_test_split(
@@ -152,16 +153,15 @@ def regresion_imputacion_salario_antes_IA(df):
     # completamos los valores nulos de la columna salario_antes_IA con las predicciones del modelo
     df.loc[pred.index,'salario_antes_IA'] = modelo.predict(X_pred) 
 
-
 def mediana_imputacion_salario_antes_IA(df) :
     print("========MEDIANA SALARIO ANTES========")
-    df['salario_antes_IA'] = df['salario_antes_IA'].fillna( df.groupby('profesion')['salario_antes_IA'].transform('median'))
+    df['salario_antes_IA'] = df['salario_antes_IA'].fillna( df.groupby('profesion')['salario_antes_IA'].transform('median')) 
 
 def imputacion_salario_antes_IA(df) :
     print("========IMPUTAR SALARIO ANTES========")
-    regresion_imputacion_salario_antes_IA(df)
-    #para los casos que salario antes y tambien salario despues eran nulos
-    mediana_imputacion_salario_antes_IA(df)
+    regresion_imputacion_salario_antes_IA(df) #para los que tienen salario despues
+    
+    mediana_imputacion_salario_antes_IA(df) #para los casos que salario antes y tambien salario despues son nulos
 
 def regresion_imputacion_salario_despues_IA(df) :
     print("========IMPUTAR SALARIO DESPUES========")
@@ -169,13 +169,12 @@ def regresion_imputacion_salario_despues_IA(df) :
     # calculamos la correlacion de las columnas con la columna a imputar "salario_despues_IA"
     v_imputar = 'salario_despues_IA'
     matriz_corr = df.corr(numeric_only=True)[v_imputar].sort_values(ascending=False)
-    cols_relevante =  matriz_corr[matriz_corr > 0.5]
+    cols_relevante =  matriz_corr[abs(matriz_corr) > 0.5]
     print("Columnas con mas de 0.5 de correlacion \n: ", cols_relevante)
     cols_relevante = matriz_corr[matriz_corr > 0.5].index.to_list() #lista de columnas
     cols_relevante.remove(v_imputar)
     print(cols_relevante)
 
-    
     # AHORA LLENAMOS LOS NULOS DE LA COLUMNA SALARIOS_DESPUES_IA, creando un modelo de regresion lineal con las columnas que tienen mayor correlacion con la columna a imputar
 
     train = df[ (df[v_imputar].notna())]
@@ -209,27 +208,29 @@ def regresion_riesgo_automatizacion(df) :
     print("========RIESGO AUTOMATIZACION========")
     v_imputar = 'riesgo_automatizacion_estimado%'
     #print(df.corr(numeric_only=True)['riesgo_automatizacion_estimado%'].sort_values(ascending=False))
+
     matriz_corr = df.corr(numeric_only=True)[v_imputar].sort_values(ascending=False)
-    cols_relevante =  matriz_corr[matriz_corr > 0.5]
+    print("Matris copleto de correlacion: \n" ,matriz_corr)
+    cols_relevante =  matriz_corr[abs(matriz_corr) > 0.5]
     print("Columnas con mas de 0.5 de correlacion : \n", cols_relevante)
     cols_relevante = matriz_corr[matriz_corr > 0.5].index.to_list() #lista de columnas
     cols_relevante.remove(v_imputar)
     print(cols_relevante)
 
     # variable respuesta
-    train = df[df[v_imputar].notna()]
+    train = df[df[v_imputar].notna()] 
 
     # Filas a imputar
-    pred = df[df[v_imputar].isna()]
+    pred = df[df[v_imputar].isna()] 
 
     # Variables predictoras
-    X = train[cols_relevante]
+    X = train[cols_relevante] # df['puntaje_reemplazo_IA', 'urgencia_reentrenamiento', 'presion_reconversion_laboral', 'intensidad_global_disrupcion_IA']
 
     # Variable objetivo
-    y = train[v_imputar]
+    y = train[v_imputar] # df[riesgo_automatizacion_estimado%].notna(). Serie
 
     # Evaluación del modelo
-    X_train, X_test, y_train, y_test = train_test_split(
+    X_train, X_test, y_train, y_test = train_test_split( # xtrain:
         X,
         y,
         test_size=0.2,
@@ -237,14 +238,14 @@ def regresion_riesgo_automatizacion(df) :
     )
 
     modelo = LinearRegression()
-    modelo.fit(X_train, y_train)
+    modelo.fit(X_train, y_train) 
 
     predicciones = modelo.predict(X_test)
 
     print("R² =", r2_score(y_test, predicciones))
 
     # Entrenamiento final con todos los datos disponibles
-    modelo.fit(X, y)
+    # modelo.fit(X, y)
 
     # Imputación
     X_pred = pred[cols_relevante]
@@ -254,7 +255,6 @@ def regresion_riesgo_automatizacion(df) :
         v_imputar
     ] = modelo.predict(X_pred) #completa con predicciones
 
-
 def imputacion_sector(df) :
     print("========IMPUTAR SECTOR========")
     # AHORA LLENAMOS LOS NULOS DE LA COLUMNA SECTOR
@@ -263,7 +263,7 @@ def imputacion_sector(df) :
     print('Cantidad de registros FINANZAS:', df['sector'][df['sector']=='Finanzas'].value_counts())
 
     # ??????????
-    df['sector'] = df['sector'].fillna(df.groupby('profesion')['sector'].transform(lambda x: x.mode().iloc[0] if not x.mode().empty else np.nan))
+    df['sector'] = df['sector'].fillna(df.groupby('profesion')['sector'].transform(lambda x: x.mode().iloc[0]))
 
 
     print('Cantidad de nulos en sector despues imputacion:',df['sector'].isna().sum())

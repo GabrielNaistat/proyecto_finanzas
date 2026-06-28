@@ -22,13 +22,15 @@ def grafico_funcion_A(df, nombre_grupo, nombre1, nombre2):
 def grafico_funcion_torta(df,nombre):
     categorias = df[nombre].value_counts()
     plt.pie(categorias.values,labels = categorias.index,autopct='%1.2f%%' )
-    plt.show()
+    #plt.show()
+
 #EN EL MAIN COLOCAS grafico_barras(df,'pais','nivel_adopcion_IA')
 def grafico_barras(df,nombre_grupo,nombre):
-    adopcion  = agrupar_promedio(df, nombre_grupo, nombre)
+    adopcion  = agrupar_promedio(df, nombre_grupo, nombre).sort_values(ascending=False)
     plt.figure(figsize=(12,6))
 
     plt.bar(adopcion.index, adopcion.values)
+    plt.ylim(bottom = 40)
 
     plt.title("Nivel promedio de adopción de IA por país (Finanzas)")
     plt.xlabel("País")
@@ -37,4 +39,4 @@ def grafico_barras(df,nombre_grupo,nombre):
     plt.xticks(rotation=45)
     plt.grid(axis="y")
 
-    plt.show()
+    #plt.show()

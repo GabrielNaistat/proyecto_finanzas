@@ -1,1 +1,8 @@
-COLUMNAS = ['identificador','profesion','sector','pais','año_registro','riesgo_automatizacion_estimado%','puntaje_reemplazo_IA','indice_brecha_habilidades','salario_antes_IA','salario_despues_IA','variacion_porcentual_salarial','crecimiento_demanda_habilidades%','factibilidad_trabajo_rem','nivel_adopcion_IA','nivel_educativo_req','categoria_riesgo','presion_reconversion_laboral','indice_volatilidad_salarial','urgencia_reentrenamiento','intensidad_global_disrupcion_IA']
+COLUMNAS = ['identificador','profesion','sector','pais','año_registro',
+            'riesgo_automatizacion_estimado%','puntaje_reemplazo_IA',
+            'indice_brecha_habilidades','salario_antes_IA',
+            'salario_despues_IA','variacion_porcentual_salarial',
+            'crecimiento_demanda_habilidades%','factibilidad_trabajo_rem',
+            'nivel_adopcion_IA','nivel_educativo_req','categoria_riesgo',
+            'presion_reconversion_laboral','indice_volatilidad_salarial',
+            'urgencia_reentrenamiento','intensidad_global_disrupcion_IA']
