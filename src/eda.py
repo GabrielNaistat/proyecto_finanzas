@@ -5,7 +5,7 @@ import numpy as np
 modulo de EDA (Exploratory Data Analysis) para analizar los datos y obtener información relevante sobre la distribución de los datos, la volatilidad de los ingresos y la brecha de habilidades por país.
 """
 
-# ?????????????????
+# detecta y elimina los outliers de las variables salario_antes_IA y salario_despues_IA, mostrando los registros que tienen valores menores a cero
 def outliers(df) :
     print("========INICIO LIMPIAR OUTLIERS========")
     variables = ['salario_antes_IA','salario_despues_IA']
@@ -16,7 +16,8 @@ def outliers(df) :
             df = df[df[var] > 0]
 
 
-
+# calcula la volatilidad de los ingresos antes y despues de la IA, mostrando el maximo, minimo, promedio, rango y varianza de las variables salario_antes_IA y salario_despues_IA
+# para responder la pregunta: ¿Qué nos dice esto sobre la estabilidad del sector?
 def volatilidad_ingresos(df):
     """Calcula la volatilidad de los ingresos antes y despues de la IA, mostrando el maximo, minimo, promedio, rango y varianza de las variables salario_antes_IA y salario_despues_IA"""
     print("========INICIO VOLATILIDAD INGRESOS========")
@@ -46,6 +47,7 @@ def agrupar_promedio(df,nombre_grupo,nombre_grupo_promedio):
     return  agrupado
 
 
+# encuentra el país con mayor brecha de habilidades y su promedio, para responder la pregunta: ¿Qué país tiene la mayor brecha de habilidades y cuál es su promedio?
 def agrupar_promedio_max(df,nombre_grupo,nombre_grupo_promedio):
     """
     imprime el país con mayor brecha de habilidades y su promedio, 

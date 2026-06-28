@@ -29,8 +29,8 @@ corregir_anio(df)
 corregir_formato_salarios(df)
 regresion_riesgo_automatizacion(df)
 
-imputacion_salario_antes_IA(df) # estoy aca
-regresion_imputacion_salario_despues_IA(df) 
+imputacion_salario_antes_IA(df)
+regresion_imputacion_salario_despues_IA(df)
 imputacion_sector(df)
 
 df = df[df['sector'] == 'Finanzas']
