@@ -90,7 +90,7 @@ def normalizacion_sector(df, l=True, hc=False): # Siempre recibe un DataFrame :
             df.rename(columns=mapa_nuevas_columnas, inplace=True)
         print(df['sector'].unique())
 
-        return df # Explicitly return the modified DataFrame
+        return df
 
 # Reasignar el resultado de la función al df para asegurarnos de que queden los cambios
 
