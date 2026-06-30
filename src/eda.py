@@ -5,10 +5,10 @@ import numpy as np
 modulo de EDA (Exploratory Data Analysis) para analizar los datos y obtener información relevante sobre la distribución de los datos, la volatilidad de los ingresos y la brecha de habilidades por país.
 """
 
-# detecta y elimina los outliers de las variables salario_antes_IA y salario_despues_IA, mostrando los registros que tienen valores menores a cero
+# detecta y elimina los outliers de las variables salario_antes_ia y salario_despues_ia, mostrando los registros que tienen valores menores a cero
 def outliers(df) :
     print("========INICIO LIMPIAR OUTLIERS========")
-    variables = ['salario_antes_IA','salario_despues_IA']
+    variables = ['salario_antes_ia','salario_despues_ia']
 
     for var in variables:   
         if df[var].min() < 0 : 
@@ -29,13 +29,15 @@ def outliers(df) :
 
         df = df[(df[var] > lim_inf) & (df[var] < lim_sup)]
 
+    return df
 
-# calcula la volatilidad de los ingresos antes y despues de la IA, mostrando el maximo, minimo, promedio, rango y varianza de las variables salario_antes_IA y salario_despues_IA
+
+# calcula la volatilidad de los ingresos antes y despues de la ia, mostrando el maximo, minimo, promedio, rango y varianza de las variables salario_antes_ia y salario_despues_ia
 # para responder la pregunta: ¿Qué nos dice esto sobre la estabilidad del sector?
 def volatilidad_ingresos(df):
-    """Calcula la volatilidad de los ingresos antes y despues de la IA, mostrando el maximo, minimo, promedio, rango y varianza de las variables salario_antes_IA y salario_despues_IA"""
+    """Calcula la volatilidad de los ingresos antes y despues de la ia, mostrando el maximo, minimo, promedio, rango y varianza de las variables salario_antes_ia y salario_despues_ia"""
     print("========INICIO VOLATILIDAD INGRESOS========")
-    variables = ['salario_antes_IA','salario_despues_IA']
+    variables = ['salario_antes_ia','salario_despues_ia']
     for var in variables:
         maximo = df[var].max()
         minimo =  df[var].min()
@@ -49,6 +51,8 @@ def volatilidad_ingresos(df):
         print(f"    Promedio         : {df[var].mean():.2f}")
         print(f"    Rango            : {rango:.2f}")
         print(f"    Varianza         : {varianza:.4f}")
+
+
 
 
 def agrupar_promedio(df,nombre_grupo,nombre_grupo_promedio):
