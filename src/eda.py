@@ -9,33 +9,51 @@ modulo de EDA (Exploratory Data Analysis) para analizar los datos y obtener info
 def outliers(df) :
     print("========INICIO LIMPIAR OUTLIERS========")
     variables = ['salario_antes_ia','salario_despues_ia']
-
-    for var in variables:   
-        if df[var].min() < 0 : 
+    
+    # Primero, convertir valores negativos a positivos
+    for var in variables:
+        if df[var].min() < 0:
             df[var] = abs(df[var])
-
+    
+    # Crear máscara acumulativa
+    mask = pd.Series([True] * len(df), index=df.index)
+    
+    for var in variables:
         Q1 = df[var].quantile(0.25)
         Q3 = df[var].quantile(0.75)
-
         IQR = Q3 - Q1
+        
+        print(f"\n    Variable: {var}")
         print(f"    Q1         : {Q1:.2f}")
-        print(f"    Q3            : {Q3:.2f}")
-        print(f"    IQE         : {IQR:.4f}")
+        print(f"    Q3         : {Q3:.2f}")
+        print(f"    IQR        : {IQR:.4f}")
 
         lim_inf = Q1 - 1.5 * IQR
         lim_sup = Q3 + 1.5 * IQR
-        outliers = df[(df[var] < lim_inf) | (df[var] > lim_sup)]
-        print(f"\{var}: límites [{lim_inf:.2f}, {lim_sup:.2f}]. Outliers encontrados: {len(outliers)}")
+        
+        # Crear máscara para esta variable (valores dentro de los límites)
+        var_mask = (df[var] >= lim_inf) & (df[var] <= lim_sup)
+        
+        # Contar outliers encontrados
+        outliers_count = (~var_mask).sum()
+        print(f"    Límites    : [{lim_inf:.2f}, {lim_sup:.2f}]")
+        print(f"    Outliers   : {outliers_count}")
+        
+        # Combinar con máscara acumulativa
+        mask = mask & var_mask
 
-        df = df[(df[var] > lim_inf) & (df[var] < lim_sup)]
+    # Filtrar una sola vez al final
+    total_eliminados = (~mask).sum()
+    print(f"\n    Total de registros eliminados: {total_eliminados}")
+    df = df[mask]
 
     return df
 
 
-# calcula la volatilidad de los ingresos antes y despues de la ia, mostrando el maximo, minimo, promedio, rango y varianza de las variables salario_antes_ia y salario_despues_ia
+# calcula la volatilidad de los ingresos antes y despues de la ia, mostrando el maximo, minimo, promedio, rango, varianza y desviacion estandar de las variables salario_antes_ia y salario_despues_ia
 # para responder la pregunta: ¿Qué nos dice esto sobre la estabilidad del sector?
 def volatilidad_ingresos(df):
-    """Calcula la volatilidad de los ingresos antes y despues de la ia, mostrando el maximo, minimo, promedio, rango y varianza de las variables salario_antes_ia y salario_despues_ia"""
+    """Calcula la volatilidad de los ingresos antes y despues de la ia, mostrando el maximo, minimo, promedio, rango, varianza y desviacion estandar de las variables salario_antes_ia y salario_despues_ia"""
     print("========INICIO VOLATILIDAD INGRESOS========")
     variables = ['salario_antes_ia','salario_despues_ia']
     for var in variables:
@@ -43,6 +61,7 @@ def volatilidad_ingresos(df):
         minimo =  df[var].min()
         rango = maximo - minimo
         varianza = df[var].var()
+        desv_estandar = df[var].std()
 
 
         print(f"\n>>> Variable: {var}")
@@ -51,6 +70,7 @@ def volatilidad_ingresos(df):
         print(f"    Promedio         : {df[var].mean():.2f}")
         print(f"    Rango            : {rango:.2f}")
         print(f"    Varianza         : {varianza:.4f}")
+        print(f"    Desv. Estándar   : {desv_estandar:.2f}")
 
 
 
