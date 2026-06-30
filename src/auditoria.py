@@ -1,9 +1,5 @@
 '''
-Realicen un reporte inicial sobre el estado 
-de la información. Deben identificar 
-inconsistencias lógicas, 
-errores de formato 
-y vacíos'''
+Se depreca el archivo'''
 
 def check_duplicados(df):
     '''
@@ -29,6 +25,11 @@ def check_vacios(df) :
         ret = False
     return ret
 
+def describe_all(df):
+    cols = df.columns.to_list()
+    for columna in cols :
+        print(df[columna].describe())
+
 
 def auditoria(df) :
     print("========INICIO AUDITORIA========")
@@ -37,6 +38,8 @@ def auditoria(df) :
     vacios = check_vacios(copia)
     err_format = True #check_format(df,)
     return dups,vacios,err_format
+
+
 
 if __name__ == "__main__":
     import pandas as pd
@@ -48,4 +51,6 @@ if __name__ == "__main__":
     df = pd.read_csv(raw_csv)
     vacios = check_vacios(df)
     hay_duplicados, hay_vacios, hay_format_err = auditoria(df)
+
+
 
