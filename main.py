@@ -10,7 +10,7 @@ import seaborn as sns
 # modulos propios
 from src.load_data import load_data
 from src.limpieza import *
-from src.auditoria import auditoria_dataframe
+from src.auditoria import auditoria_completa
 from src.eda import *
 from src.visualizacion import *
 
@@ -20,7 +20,7 @@ raw_csv = "data\\raw\\ai_job_replacement_dirty.csv"
 df = load_data(raw_csv)
 
 # auditoria
-auditoria_dataframe(df)
+auditoria_completa(df)
 
 #limpieza
 df = renombrar_columnas(df)

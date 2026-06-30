@@ -3,6 +3,8 @@ Archivo src/auditoria.py
 Contiene funciones para auditar el dataframe original, para detectar duplicados, vacios y errores
 de formato'''
 
+import pandas as pd
+
 def check_duplicados(df):
     '''
     Chequeamos si hace falta quitar duplicados
@@ -33,7 +35,7 @@ def describe_all(df):
         print(df[columna].describe())
 
 
-# def auditoria(df) :
+def auditoria(df) :
     print("========INICIO AUDITORIA========")
     copia = df.copy()
     dups = check_duplicados(copia)
@@ -42,27 +44,36 @@ def describe_all(df):
     return dups,vacios,err_format
 
 def auditoria_completa(df) :
+
     """
     Auditoria completa del dataframe original, para detectar duplicados, vacios y errores de formato
     """
-
+    print("========INICIO AUDITORIA COMPLETA========")
+    
     # se detectan duplicados en job_id
     print("Cantidad de duplicados en job_id:")
-    print((df.drop_duplicates(subset=['job_id']).sum()))
+    print((df["job_id"].duplicated()).sum())
 
     # valores nulos en distintas columnas
     print("dataframe cantidad de nulos por columna:")
     print(df.isnull().sum())
 
     # tipos de datos incorrectos en distintas columnas "salario_antes_IA" y "salario_despues_IA" deben ser float, "year" debe ser int, "country" y "industry" deben ser string
-    print(f"dataframe info: {df.info()}")
+    print(f"dataframe info:")
+    print(df.info())
 
     # salarios negativos en "salario_antes_IA" y "salario_despues_IA" deben ser positivos
-    print("Cantidad de valores negativos en salario_antes_IA y salario_despues_IA:")
-    print(df[(df['salario_antes_IA'] < 0) | (df['salario_despues_IA'] < 0)].sum())
+    print("Cantidad de valores negativos en salary_before_usd y salary_after_usd:")
+
+    # convertimos a numerico para poder detectar negativos
+    salary_before = pd.to_numeric(df["salary_before_usd"], errors='coerce')
+    salary_after = pd.to_numeric(df["salary_after_usd"], errors='coerce')
+
+    df_negativos = df[(salary_before< 0).sum() | (salary_after < 0).sum()]
+    print(df_negativos)
 
     # se detectaron caracteres especiales en "salario_antes_IA" y "salario_despues_IA" que deben ser eliminados
-    print("Existen valores con caracteres especiales en salario_antes_IA y salario_despues_IA:")
+    print("Existen valores con caracteres especiales en salary_before_usd y salary_after_usd:")
     print(df.sample(20))
     
     print("")
