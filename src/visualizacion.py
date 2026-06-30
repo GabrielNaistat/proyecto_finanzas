@@ -23,7 +23,7 @@ def grafico_funcion_torta(df,nombre):
     print('========== GRAFICO FUNCION TORTA =========')
     categorias = df[nombre].value_counts()
     plt.pie(categorias.values,labels = categorias.index,autopct='%1.2f%%' )
-    plt.show()
+    #plt.show()
 
 #EN EL MAIN COLOCAS grafico_barras(df,'pais','nivel_adopcion_ia')
 def grafico_barras(df,nombre_grupo,nombre):
@@ -41,4 +41,4 @@ def grafico_barras(df,nombre_grupo,nombre):
     plt.xticks(rotation=45)
     plt.grid(axis="y")
 
-    plt.show()
+    #plt.show()
