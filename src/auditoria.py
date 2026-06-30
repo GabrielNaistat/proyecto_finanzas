@@ -1,7 +1,5 @@
 '''
-Archivo src/auditoria.py
-Contiene funciones para auditar el dataframe original, para detectar duplicados, vacios y errores
-de formato'''
+decretado'''
 
 import pandas as pd
 
@@ -40,16 +38,20 @@ def auditoria(df) :
     copia = df.copy()
     dups = check_duplicados(copia)
     vacios = check_vacios(copia)
-    err_format = True #check_format(df,)
-    return dups,vacios,err_format
+    # err_format = True #check_format(df,)
+    return dups,vacios
 
-def auditoria_completa(df) :
+def auditoria_completa(df_original) :
 
     """
     Auditoria completa del dataframe original, para detectar duplicados, vacios y errores de formato
     """
     print("========INICIO AUDITORIA COMPLETA========")
     
+    df = df_original.copy()
+    # limpiar espacios en nombres de columna
+    df.columns = df.columns.str.strip()
+
     # se detectan duplicados en job_id
     print("Cantidad de duplicados en job_id:")
     print((df["job_id"].duplicated()).sum())
@@ -69,7 +71,7 @@ def auditoria_completa(df) :
     salary_before = pd.to_numeric(df["salary_before_usd"], errors='coerce')
     salary_after = pd.to_numeric(df["salary_after_usd"], errors='coerce')
 
-    df_negativos = df[(salary_before< 0).sum() | (salary_after < 0).sum()]
+    df_negativos = df[(salary_before< 0) | (salary_after < 0)]
     print(df_negativos)
 
     # se detectaron caracteres especiales en "salario_antes_IA" y "salario_despues_IA" que deben ser eliminados
@@ -93,7 +95,7 @@ if __name__ == "__main__":
     df = pd.read_csv(raw_csv)
 
     # funcion que audita el dataframe y devuelve un resumen de duplicados, vacios y errores de formato
-    auditoria_completa(df)
+    # auditoria_completa(df)
 
 
 
