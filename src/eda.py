@@ -16,11 +16,12 @@ def outliers(df) :
 
         Q1 = df[var].quantile(0.25)
         Q3 = df[var].quantile(0.75)
-
         IQR = Q3 - Q1
+        
+        print(f"\n    Variable: {var}")
         print(f"    Q1         : {Q1:.2f}")
         print(f"    Q3            : {Q3:.2f}")
-        print(f"    IQE         : {IQR:.4f}")
+        print(f"    IQR         : {IQR:.4f}")
 
         lim_inf = Q1 - 1.5 * IQR
         lim_sup = Q3 + 1.5 * IQR
@@ -32,10 +33,10 @@ def outliers(df) :
     return df
 
 
-# calcula la volatilidad de los ingresos antes y despues de la ia, mostrando el maximo, minimo, promedio, rango y varianza de las variables salario_antes_ia y salario_despues_ia
+# calcula la volatilidad de los ingresos antes y despues de la ia, mostrando el maximo, minimo, promedio, rango, varianza y desviacion estandar de las variables salario_antes_ia y salario_despues_ia
 # para responder la pregunta: ¿Qué nos dice esto sobre la estabilidad del sector?
 def volatilidad_ingresos(df):
-    """Calcula la volatilidad de los ingresos antes y despues de la ia, mostrando el maximo, minimo, promedio, rango y varianza de las variables salario_antes_ia y salario_despues_ia"""
+    """Calcula la volatilidad de los ingresos antes y despues de la ia, mostrando el maximo, minimo, promedio, rango, varianza y desviacion estandar de las variables salario_antes_ia y salario_despues_ia"""
     print("========INICIO VOLATILIDAD INGRESOS========")
     variables = ['salario_antes_ia','salario_despues_ia']
     for var in variables:
@@ -43,6 +44,7 @@ def volatilidad_ingresos(df):
         minimo =  df[var].min()
         rango = maximo - minimo
         varianza = df[var].var()
+        desv_estandar = df[var].std()
 
 
         print(f"\n>>> Variable: {var}")
@@ -51,6 +53,7 @@ def volatilidad_ingresos(df):
         print(f"    Promedio         : {df[var].mean():.2f}")
         print(f"    Rango            : {rango:.2f}")
         print(f"    Varianza         : {varianza:.4f}")
+        print(f"    Desv. Estándar   : {desv_estandar:.2f}")
 
 
 
