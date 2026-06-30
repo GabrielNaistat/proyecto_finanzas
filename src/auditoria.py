@@ -1,5 +1,7 @@
 '''
-Se depreca el archivo'''
+Archivo src/auditoria.py
+Contiene funciones para auditar el dataframe original, para detectar duplicados, vacios y errores
+de formato'''
 
 def check_duplicados(df):
     '''
@@ -31,13 +33,42 @@ def describe_all(df):
         print(df[columna].describe())
 
 
-def auditoria(df) :
+# def auditoria(df) :
     print("========INICIO AUDITORIA========")
     copia = df.copy()
     dups = check_duplicados(copia)
     vacios = check_vacios(copia)
     err_format = True #check_format(df,)
     return dups,vacios,err_format
+
+def auditoria_completa(df) :
+    """
+    Auditoria completa del dataframe original, para detectar duplicados, vacios y errores de formato
+    """
+
+    # se detectan duplicados en job_id
+    print("Cantidad de duplicados en job_id:")
+    print((df.drop_duplicates(subset=['job_id']).sum()))
+
+    # valores nulos en distintas columnas
+    print("dataframe cantidad de nulos por columna:")
+    print(df.isnull().sum())
+
+    # tipos de datos incorrectos en distintas columnas "salario_antes_IA" y "salario_despues_IA" deben ser float, "year" debe ser int, "country" y "industry" deben ser string
+    print(f"dataframe info: {df.info()}")
+
+    # salarios negativos en "salario_antes_IA" y "salario_despues_IA" deben ser positivos
+    print("Cantidad de valores negativos en salario_antes_IA y salario_despues_IA:")
+    print(df[(df['salario_antes_IA'] < 0) | (df['salario_despues_IA'] < 0)].sum())
+
+    # se detectaron caracteres especiales en "salario_antes_IA" y "salario_despues_IA" que deben ser eliminados
+    print("Existen valores con caracteres especiales en salario_antes_IA y salario_despues_IA:")
+    print(df.sample(20))
+    
+    print("")
+    print("========FIN AUDITORIA========")
+    
+    
 
 
 
@@ -49,8 +80,14 @@ if __name__ == "__main__":
 
     #carga
     df = pd.read_csv(raw_csv)
-    vacios = check_vacios(df)
-    hay_duplicados, hay_vacios, hay_format_err = auditoria(df)
+
+    # funcion que audita el dataframe y devuelve un resumen de duplicados, vacios y errores de formato
+    auditoria_completa(df)
+
+
+
+    # vacios = check_vacios(df)
+    # hay_duplicados, hay_vacios, hay_format_err = auditoria(df)
 
 
 

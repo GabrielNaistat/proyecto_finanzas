@@ -72,3 +72,11 @@ if __name__ == "__main__":
     print(data_cleaned.isna().sum())  # Mostrar conteo de valores nulos por columna
     
     print("\n¡Procesamiento completo!")
+
+    print("info de datos procesados:")
+    print("")
+    print(data_cleaned.info())
+    
+    print("")
+    print("\nDescripción estadística de los datos procesados:")
+    print(data_cleaned.describe())

@@ -19,7 +19,8 @@ raw_csv = "data\\raw\\ai_job_replacement_dirty.csv"
 #carga
 df = load_data(raw_csv)
 
-#print(df.sample(5))
+# auditoria
+
 
 #limpieza
 df = renombrar_columnas(df)
