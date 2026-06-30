@@ -10,7 +10,6 @@ import seaborn as sns
 # modulos propios
 from src.load_data import load_data
 from src.limpieza import *
-from src.auditoria import *
 from src.auditoria import auditoria_dataframe
 from src.eda import *
 from src.visualizacion import *
@@ -21,8 +20,6 @@ raw_csv = "data\\raw\\ai_job_replacement_dirty.csv"
 df = load_data(raw_csv)
 
 # auditoria
-print("Auditoria del dataframe original:")
-
 auditoria_dataframe(df)
 
 #limpieza
@@ -34,8 +31,8 @@ df = corregir_formato_salarios(df)
 
 #Limpieza imputacion
 
-df = imputacion_salario_antes_ia(df)
-df = regresion_imputacion_salario_despues_ia(df)
+df = imputacion_salario_antes_IA(df)
+df = regresion_imputacion_salario_despues_IA(df)
 df = regresion_riesgo_automatizacion(df)
 df = imputacion_sector(df)
 
