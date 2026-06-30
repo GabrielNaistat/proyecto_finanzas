@@ -23,6 +23,8 @@ def grafico_funcion_torta(df,nombre):
     print('========== GRAFICO FUNCION TORTA =========')
     categorias = df[nombre].value_counts()
     plt.pie(categorias.values,labels = categorias.index,autopct='%1.2f%%' )
+    plt.title('Categoria de Riesgo')
+
     #plt.show()
 
 #EN EL MAIN COLOCAS grafico_barras(df,'pais','nivel_adopcion_ia')
