@@ -11,6 +11,7 @@ import seaborn as sns
 from src.load_data import load_data
 from src.limpieza import *
 from src.auditoria import *
+from src.auditoria import auditoria_dataframe
 from src.eda import *
 from src.visualizacion import *
 
@@ -20,7 +21,9 @@ raw_csv = "data\\raw\\ai_job_replacement_dirty.csv"
 df = load_data(raw_csv)
 
 # auditoria
+print("Auditoria del dataframe original:")
 
+auditoria_dataframe(df)
 
 #limpieza
 df = renombrar_columnas(df)
